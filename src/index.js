@@ -1,16 +1,29 @@
-import express from 'express';
+//import express from 'express';
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-const app = express();
-app.get('/', (req, res) => {
-    res.send('Hello World')
-})
-app.listen(4000, () => {
-    console.log('Listening');
-});
+// const app = express();
+// app.get('/', (req, res) => {
+//     res.send('Hello World')
+// })
+// app.listen(4000, () => {
+//     console.log('Listening');
+// });
 
 //const GDAX = require("gdax");
 //const publicClient = new GDAX.PublicClient();
 
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', function(socket) {
+    console.log('A new WebSocket connection has been established');
+});
+http.listen(8000, function() {
+    console.log('Listening on *:8000');
+});
 const callback = (error, response, data) => {
     if (error)
         return console.dir(error);
@@ -37,6 +50,8 @@ const websocketCallback = (data) => {
 
         return;
     //console.dir(data);
+    if(isNaN(data.price))  return;
+    io.emit('stock price update', data.product_id+' '+data.price);
     saveToDb(data.product_id,data.price)
 
 }

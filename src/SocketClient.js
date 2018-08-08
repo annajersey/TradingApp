@@ -16,9 +16,7 @@ class SocketClient extends EventEmitter {
         this.websocketURI = websocketURI;
 
         this.channels = ['full'];
-        if (!this.channels.includes('heartbeat')) {
-            this.channels.push('heartbeat');
-        }
+
         this.connect();
     }
 
