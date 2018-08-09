@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 const pg = require('pg');
@@ -11,6 +10,13 @@ const pool = new pg.Pool({
     port: process.env.DATABASE_PORT
 });
 
+exports.clearDb = function () {
+    pool.query("DELETE from currencies where datetime < CURRENT_TIMESTAMP - INTERVAL '30 days'"
+          , (err, res) => {
+            console.log(err, res);
+
+        })
+}
 
 exports.saveToDb = function (name, price) {
     console.log(name, price);
@@ -18,10 +24,10 @@ exports.saveToDb = function (name, price) {
     pool.query("SELECT count(*) from currencies where name='" + name + "'", (err, res) => {
 
 
-            console.log(res.rows[0].count)
+            //console.log(res.rows[0].count)
             pool.query("INSERT INTO currencies (name,price,datetime) " +
                 "VALUES ('" + name + "','" + price + "',current_timestamp)", (err, res) => {
-                console.log(err, res);
+                //console.log(err, res);
 
             })
             //pool.end();

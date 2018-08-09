@@ -2,7 +2,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
+var cron = require('node-cron');
 // const app = express();
 // app.get('/', (req, res) => {
 //     res.send('Hello World')
@@ -13,7 +13,10 @@ var io = require('socket.io')(http);
 
 //const GDAX = require("gdax");
 //const publicClient = new GDAX.PublicClient();
-
+cron.schedule('* * * * *', function(){
+    clearDb();
+    console.log('running a task every minute');
+});
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -24,12 +27,12 @@ io.on('connection', function(socket) {
 http.listen(8000, function() {
     console.log('Listening on *:8000');
 });
-const callback = (error, response, data) => {
-    if (error)
-        return console.dir(error);
-
-    return console.dir(data);
-}
+// const callback = (error, response, data) => {
+//     if (error)
+//         return console.dir(error);
+//
+//     return console.dir(data);
+// }
 //publicClient.getProducts(callback);
 //publicClient.getCurrencies(callback);
 // publicClient.getProductHistoricRates('BTC-USD', callback);
@@ -40,7 +43,7 @@ const callback = (error, response, data) => {
 //     callback
 // );
 import SocketClient from './SocketClient'
-import {saveToDb} from './DBClient'
+import {clearDb, saveToDb} from './DBClient'
 
 const websocket = new SocketClient(['BTC-USD','ETH-USD','LTC-USD']);
 
